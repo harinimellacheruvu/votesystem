@@ -1,0 +1,36 @@
+---
+- name: install docker
+  hosts: web
+  tasks:
+    - name: install docker
+      yum:
+        name: docker
+    - name: install pip
+      yum:
+        name: pip
+    - name: install  coker for python
+      pip:
+        name: docker-py
+    - name: start docker
+      service:
+        name: docker
+        enabled: true
+        state: started
+    - name: create backend container
+      docker_container:
+        name: backend1
+        image: harinimellacheruvu/harinim:backend
+        state: started
+        env:
+          MYSQL_ROOT_PASSWORD: "123"
+          MYSQL_DATABASE: votesystem
+        ports:
+          - "3308:3306"
+
+    - name: create frontend  container
+      docker_container:
+        name: frontend1
+        image: harinimellacheruvu/harinim:frontend
+        state: started
+        ports:
+          - "9096:80"
